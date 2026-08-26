@@ -166,5 +166,5 @@ def get_all_locations() -> List[Location]:
             latitude=float(row["latitude"]),
             longitude=float(row["longitude"]),
         )
-        for _, row in df.iterows()
+        for _, row in df.iterrows()
     ]
