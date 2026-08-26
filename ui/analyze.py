@@ -5,14 +5,14 @@ ANALYZE UI – Satellite data acquisition and spectral analysis.
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional
+from typing import Optional
 
 import numpy as np
 import streamlit as st
 
-from src.satellite.stac import search_scenes, select_best_scene, Scene
-from src.satellite.sentinel import get_asset_href, extract_metadata, RGB_BANDS
-from src.satellite.raster import load_raster
+from src.satellite.stac import search_scenes, select_best_scene, Scene, SearchStatus
+from src.satellite.sentinel import get_asset_href, extract_metadata
+from src.satellite.raster import load_raster, align_bands, build_rgb, RasterData
 from src.spectral.indices import compute_all, summarize_index
 from src.visualization.charts import index_summary_chart
 
@@ -35,18 +35,32 @@ def render_analyze() -> None:
         with st.spinner("Querying STAC catalog…"):
             end = datetime.utcnow()
             start = end - timedelta(days=days_back)
-            scenes = search_scenes(
+            result = search_scenes(
                 aoi=aoi,
                 datetime_range=(start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")),
                 max_cloud_cover=float(max_cloud),
                 limit=limit,
             )
-            st.session_state.scenes = scenes
-            best = select_best_scene(scenes)
-            st.session_state.selected_scene = best
+            st.session_state.stac_result = result
+            st.session_state.scenes = result.scenes
+            st.session_state.selected_scene = select_best_scene(result)
 
+    result = st.session_state.get("stac_result")
     scenes = st.session_state.get("scenes", [])
     scene: Optional[Scene] = st.session_state.get("selected_scene")
+
+    if result is not None:
+        if result.status == SearchStatus.API_ERROR:
+            st.error("STAC API request failed.")
+            if result.error_detail:
+                st.caption(f"Detail: {result.error_detail}")
+            return
+        if result.status == SearchStatus.INVALID_AOI:
+            st.error("Invalid area of interest.")
+            return
+        if result.status == SearchStatus.NO_RESULTS:
+            st.warning(result.message or "No suitable Sentinel-2 scene was found.")
+            return
 
     if not scenes and "scenes" in st.session_state:
         st.warning("No suitable Sentinel-2 scene was found.")
@@ -56,16 +70,14 @@ def render_analyze() -> None:
         st.info("Run a search to discover Sentinel-2 scenes.")
         return
 
-    meta = extract_metadata(scene)
-    st.success(f"Selected scene: **{scene.id}**  |  Cloud: {scene.cloud_cover:.1f}%  |  Date: {scene.datetime}")
+    st.success(
+        f"Selected scene: **{scene.id}**  |  Cloud: {scene.cloud_cover:.1f}%  |  Date: {scene.datetime}"
+    )
 
-    # Attempt to load a preview (visual asset preferred)
-    visual_href = get_asset_href(scene, "visual") or get_asset_href(scene, "B04")
-    if visual_href and st.button("Load preview & compute indices"):
-        with st.spinner("Loading raster assets…"):
+    if st.button("Load preview & compute indices"):
+        with st.spinner("Loading and aligning raster assets…"):
             try:
-                # Load RGB-ish bands for indices
-                bands = {}
+                rasters: dict = {}
                 load_errors = []
                 for b in ["B04", "B03", "B02", "B08", "B11"]:
                     href = get_asset_href(scene, b)
@@ -73,31 +85,48 @@ def render_analyze() -> None:
                         load_errors.append(f"{b}: asset not found")
                         continue
                     try:
-                        r = load_raster(href, aoi=aoi, max_size=512)
-                        bands[b] = r.data[0] if r.data.ndim == 3 else r.data
+                        rasters[b] = load_raster(href, aoi=aoi, max_size=512)
                     except Exception as band_err:
                         load_errors.append(f"{b}: {band_err}")
 
-                if not bands:
+                if not rasters:
                     st.error("Could not load required band assets.")
                     if load_errors:
                         st.caption("Details: " + " | ".join(load_errors[:3]))
                     return
 
-                # Store for later stages
-                st.session_state.band_data = bands
-                st.session_state.analysis_ready = True
+                # Spatial alignment to B08 grid (10 m)
+                aligned = align_bands(rasters, reference_key="B08")
+                bands = {k: r.band_array() for k, r in aligned.items()}
 
+                # RGB composition
+                rgb = None
+                if all(k in bands for k in ("B04", "B03", "B02")):
+                    rgb = build_rgb(bands["B04"], bands["B03"], bands["B02"])
+
+                # Spectral indices
                 indices = compute_all(bands)
                 summaries = {k: summarize_index(v) for k, v in indices.items()}
+
+                st.session_state.band_data = bands
+                st.session_state.raster_meta = {
+                    k: {"crs": str(r.crs), "shape": r.band_array().shape, "transform": r.transform}
+                    for k, r in aligned.items()
+                }
+                st.session_state.rgb_image = rgb
                 st.session_state.spectral_summaries = summaries
                 st.session_state.spectral_indices = indices
-
+                st.session_state.analysis_ready = True
                 st.success("Spectral analysis complete.")
             except Exception as e:
                 st.error(f"Raster processing failed: {e}")
 
     if st.session_state.get("analysis_ready"):
+        rgb = st.session_state.get("rgb_image")
+        if rgb is not None:
+            st.markdown("### Sentinel-2 RGB")
+            st.image(rgb, caption="True-color composite (B04 / B03 / B02)", use_container_width=True)
+
         summaries = st.session_state.get("spectral_summaries", {})
         if summaries:
             st.markdown("### Key Metrics")
