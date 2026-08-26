@@ -1,0 +1,64 @@
+id,country,country_code,region,location,category,latitude,longitude
+loc_0001,Afghanistan,AF,Asia,Kabul,CAPITAL,34.5553,69.2075
+loc_0002,Albania,AL,Europe,Tirana,CAPITAL,41.3275,19.8187
+loc_0003,Algeria,DZ,Africa,Algiers,CAPITAL,36.7538,3.0588
+loc_0004,Andorra,AD,Europe,Andorra la Vella,CAPITAL,42.5063,1.5218
+loc_0005,Angola,AO,Africa,Luanda,CAPITAL,-8.839,13.2894
+loc_0006,Argentina,AR,South America,Buenos Aires,CAPITAL,-34.6037,-58.3816
+loc_0007,Armenia,AM,Asia,Yerevan,CAPITAL,40.1792,44.4991
+loc_0008,Australia,AU,Oceania,Canberra,CAPITAL,-35.2809,149.13
+loc_0009,Austria,AT,Europe,Vienna,CAPITAL,48.2082,16.3738
+loc_0010,Azerbaijan,AZ,Asia,Baku,CAPITAL,40.4093,49.8671
+loc_0011,Bahamas,BS,North America,Nassau,CAPITAL,25.0343,-77.3963
+loc_0012,Bahrain,BH,Asia,Manama,CAPITAL,26.2285,50.586
+loc_0013,Bangladesh,BD,Asia,Dhaka,CAPITAL,23.8103,90.4125
+loc_0014,Barbados,BB,North America,Bridgetown,CAPITAL,13.0975,-59.6105
+loc_0015,Belarus,BY,Europe,Minsk,CAPITAL,53.9045,27.5615
+loc_0016,Belgium,BE,Europe,Brussels,CAPITAL,50.8503,4.3517
+loc_0017,Belize,BZ,North America,Belmopan,CAPITAL,17.251,-88.759
+loc_0018,Benin,BJ,Africa,Porto-Novo,CAPITAL,6.4969,2.6283
+loc_0019,Bhutan,BT,Asia,Thimphu,CAPITAL,27.4728,89.639
+loc_0020,Bolivia,BO,South America,Sucre,CAPITAL,-19.0196,-65.2619
+loc_0021,Bosnia and Herzegovina,BA,Europe,Sarajevo,CAPITAL,43.8563,18.4131
+loc_0022,Botswana,BW,Africa,Gaborone,CAPITAL,-24.6282,25.9231
+loc_0023,Brazil,BR,South America,Brasília,CAPITAL,-15.8267,-47.9218
+loc_0024,Brunei,BN,Asia,Bandar Seri Begawan,CAPITAL,4.9031,114.9398
+loc_0025,Bulgaria,BG,Europe,Sofia,CAPITAL,42.6977,23.3219
+loc_0026,Burkina Faso,BF,Africa,Ouagadougou,CAPITAL,12.3714,-1.5197
+loc_0027,Burundi,BI,Africa,Gitega,CAPITAL,-3.4264,29.9306
+loc_0028,Cabo Verde,CV,Africa,Praia,CAPITAL,14.933,-23.5133
+loc_0029,Cambodia,KH,Asia,Phnom Penh,CAPITAL,11.5564,104.9282
+loc_0030,Cameroon,CM,Africa,Yaoundé,CAPITAL,3.848,11.5021
+loc_0031,Canada,CA,North America,Ottawa,CAPITAL,45.4215,-75.6972
+loc_0032,Central African Republic,CF,Africa,Bangui,CAPITAL,4.3947,18.5582
+loc_0033,Chad,TD,Africa,N'Djamena,CAPITAL,12.1348,15.0557
+loc_0034,Chile,CL,South America,Santiago,CAPITAL,-33.4489,-70.6693
+loc_0035,China,CN,Asia,Beijing,CAPITAL,39.9042,116.4074
+loc_0036,Colombia,CO,South America,Bogotá,CAPITAL,4.711,-74.0721
+loc_0037,Comoros,KM,Africa,Moroni,CAPITAL,-11.7172,43.2473
+loc_0038,Congo,CG,Africa,Brazzaville,CAPITAL,-4.2634,15.2429
+loc_0039,Democratic Republic of the Congo,CD,Africa,Kinshasa,CAPITAL,-4.4419,15.2663
+loc_0040,Costa Rica,CR,North America,San José,CAPITAL,9.9281,-84.0907
+loc_0041,Croatia,HR,Europe,Zagreb,CAPITAL,45.815,15.9819
+loc_0042,Cuba,CU,North America,Havana,CAPITAL,23.1136,-82.3666
+loc_0043,Cyprus,CY,Europe,Nicosia,CAPITAL,35.1856,33.3823
+loc_0044,Czech Republic,CZ,Europe,Prague,CAPITAL,50.0755,14.4378
+loc_0045,Denmark,DK,Europe,Copenhagen,CAPITAL,55.6761,12.5683
+loc_0046,Djibouti,DJ,Africa,Djibouti,CAPITAL,11.8251,42.5903
+loc_0047,Dominica,DM,North America,Roseau,CAPITAL,15.301,-61.3881
+loc_0048,Dominican Republic,DO,North America,Santo Domingo,CAPITAL,18.4861,-69.9312
+loc_0049,Ecuador,EC,South America,Quito,CAPITAL,-0.1807,-78.4678
+loc_0050,Egypt,EG,Africa,Cairo,CAPITAL,30.0444,31.2357
+loc_0201,Brazil,BR,South America,São Paulo,CITY,-23.5505,-46.6333
+loc_0202,Brazil,BR,South America,Rio de Janeiro,CITY,-22.9068,-43.1729
+loc_0203,United States,US,North America,New York,CITY,40.7128,-74.006
+loc_0204,United States,US,North America,Los Angeles,CITY,34.0522,-118.2437
+loc_0205,Japan,JP,Asia,Tokyo,CITY,35.6762,139.6503
+loc_0206,United Kingdom,GB,Europe,London,CITY,51.5074,-0.1278
+loc_0207,Australia,AU,Oceania,Sydney,CITY,-33.8688,151.2093
+loc_0208,South Africa,ZA,Africa,Johannesburg,CITY,-26.2041,28.0473
+loc_0209,Japan,JP,Asia,Mount Fuji,MOUNTAIN,35.3606,138.7274
+loc_0210,Nepal,NP,Asia,Mount Everest,MOUNTAIN,27.9881,86.925
+loc_0211,Brazil,BR,South America,Amazon Rainforest (Manaus),FOREST,-3.119,-60.0217
+loc_0212,Brazil,BR,South America,Carajás Mine,MINING,-6.0589,-50.1667
+loc_0116,Namibia,NA,Africa,Windhoek,CAPITAL,-22.5609,17.0658
