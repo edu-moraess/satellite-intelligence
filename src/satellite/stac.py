@@ -10,16 +10,24 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
 from pystac_client import Client
-from shapely.geometry import box, mapping, shape
+from shapely.geometry import box, mapping
 from shapely.geometry.base import BaseGeometry
 
 
-# Default public STAC endpoint (Element84 Earth Search)
 DEFAULT_STAC_URL = "https://earth-search.aws.element84.com/v1"
 DEFAULT_COLLECTION = "sentinel-2-l2a"
+
+
+class SearchStatus(str, Enum):
+    SUCCESS = "SUCCESS"
+    NO_RESULTS = "NO_RESULTS"
+    API_ERROR = "API_ERROR"
+    INVALID_AOI = "INVALID_AOI"
+    INVALID_DATE_RANGE = "INVALID_DATE_RANGE"
 
 
 @dataclass
@@ -47,14 +55,35 @@ class Scene:
         }
 
 
+@dataclass
+class SearchResult:
+    """Typed STAC search outcome — distinguishes empty vs error."""
+
+    status: SearchStatus
+    scenes: List[Scene] = field(default_factory=list)
+    message: str = ""
+    error_detail: Optional[str] = None
+
+    @property
+    def ok(self) -> bool:
+        return self.status == SearchStatus.SUCCESS
+
+    def __iter__(self):
+        return iter(self.scenes)
+
+    def __len__(self) -> int:
+        return len(self.scenes)
+
+    def __bool__(self) -> bool:
+        return len(self.scenes) > 0
+
+
 def _aoi_to_geometry(aoi: Any) -> Dict[str, Any]:
-    """Convert various AOI representations to GeoJSON geometry."""
     if isinstance(aoi, dict) and "type" in aoi:
         return aoi
     if isinstance(aoi, BaseGeometry):
         return mapping(aoi)
     if isinstance(aoi, (list, tuple)) and len(aoi) == 4:
-        # [minx, miny, maxx, maxy]
         return mapping(box(*aoi))
     raise ValueError("AOI must be GeoJSON dict, Shapely geometry or [minx,miny,maxx,maxy]")
 
@@ -66,24 +95,38 @@ def search_scenes(
     limit: int = 20,
     collection: str = DEFAULT_COLLECTION,
     stac_url: str = DEFAULT_STAC_URL,
-) -> List[Scene]:
+) -> SearchResult:
     """
     Search STAC for Sentinel-2 scenes intersecting the AOI.
 
-    Returns empty list (never raises) when no suitable scenes are found
-    or when the catalog is unreachable.
+    Returns SearchResult with explicit status:
+    SUCCESS | NO_RESULTS | API_ERROR | INVALID_AOI | INVALID_DATE_RANGE
     """
     try:
         geom = _aoi_to_geometry(aoi)
-        client = Client.open(stac_url)
+    except Exception as e:
+        return SearchResult(
+            status=SearchStatus.INVALID_AOI,
+            message="Invalid area of interest.",
+            error_detail=str(e),
+        )
 
+    try:
         if datetime_range is None:
             end = datetime.utcnow()
             start = end - timedelta(days=180)
             datetime_str = f"{start.strftime('%Y-%m-%d')}/{end.strftime('%Y-%m-%d')}"
         else:
             datetime_str = f"{datetime_range[0]}/{datetime_range[1]}"
+    except Exception as e:
+        return SearchResult(
+            status=SearchStatus.INVALID_DATE_RANGE,
+            message="Invalid date range.",
+            error_detail=str(e),
+        )
 
+    try:
+        client = Client.open(stac_url)
         search = client.search(
             collections=[collection],
             intersects=geom,
@@ -113,14 +156,31 @@ def search_scenes(
                     properties=props,
                 )
             )
-        return scenes
-    except Exception:
-        # Network / API / parsing failures → graceful empty result
-        return []
+
+        if not scenes:
+            return SearchResult(
+                status=SearchStatus.NO_RESULTS,
+                scenes=[],
+                message="No suitable Sentinel-2 scenes found for the given AOI and filters.",
+            )
+        return SearchResult(
+            status=SearchStatus.SUCCESS,
+            scenes=scenes,
+            message=f"Found {len(scenes)} scene(s).",
+        )
+    except Exception as e:
+        return SearchResult(
+            status=SearchStatus.API_ERROR,
+            scenes=[],
+            message="STAC API request failed.",
+            error_detail=str(e),
+        )
 
 
-def select_best_scene(scenes: List[Scene]) -> Optional[Scene]:
+def select_best_scene(scenes) -> Optional[Scene]:
     """Select the scene with lowest cloud cover (already sorted)."""
+    if isinstance(scenes, SearchResult):
+        scenes = scenes.scenes
     if not scenes:
         return None
     return scenes[0]
