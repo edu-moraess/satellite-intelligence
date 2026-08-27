@@ -1,0 +1,46 @@
+{
+  "project": "Satellite Intelligence V2",
+  "dataset": "LoveDA",
+  "device": "Tesla T4",
+  "image_size": 256,
+  "num_classes": 6,
+  "class_names": [
+    "Background",
+    "Vegetation",
+    "Water",
+    "Urban",
+    "Bare Soil",
+    "Agriculture"
+  ],
+  "base_filters": 32,
+  "epochs_configured": 30,
+  "epochs_completed": 30,
+  "batch_size": 8,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "best_checkpoint": "/content/satellite-intelligence/models/checkpoints/unet_v2_best.pt",
+  "metrics": {
+    "pixel_accuracy": 0.4831087742138581,
+    "mean_iou": 0.2632290716221765,
+    "iou_per_class": [
+      0.39557067579774924,
+      0.3231480277943854,
+      0.08322327509227488,
+      0.266820623467226,
+      0.2333393466983918,
+      0.27727248088303147
+    ],
+    "loss": 1.107323264676418
+  },
+  "loveda_to_train": {
+    "0": 255,
+    "1": 0,
+    "2": 5,
+    "3": 3,
+    "4": 3,
+    "5": 2,
+    "6": 4,
+    "7": 1
+  },
+  "training_seconds": 9001.034166097641
+}

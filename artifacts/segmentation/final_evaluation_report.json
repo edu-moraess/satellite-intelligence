@@ -1,0 +1,76 @@
+{
+  "project": "Satellite Intelligence V2",
+  "dataset": "LoveDA",
+  "architecture": "U-Net",
+  "checkpoint_epoch": 30,
+  "image_size": 256,
+  "input_channels": 3,
+  "num_classes": 6,
+  "base_filters": 32,
+  "total_parameters": 7763206,
+  "trainable_parameters": 7763206,
+  "pixel_accuracy": 0.4831087742138581,
+  "mean_iou": 0.2632290716221765,
+  "iou_per_class": {
+    "Background": 0.39557067579774924,
+    "Vegetation": 0.3231480277943854,
+    "Water": 0.08322327509227488,
+    "Urban": 0.266820623467226,
+    "Bare Soil": 0.2333393466983918,
+    "Agriculture": 0.27727248088303147
+  },
+  "checkpoint_val_loss": 1.1073232658171768,
+  "checkpoint_mean_iou": 0.2632290716221765,
+  "checkpoint_pixel_accuracy": 0.4831087742138581,
+  "confusion_matrix": [
+    [
+      24162214,
+      1623595,
+      179610,
+      4053989,
+      2035815,
+      6692425
+    ],
+    [
+      7901502,
+      11960613,
+      471897,
+      5888270,
+      3715832,
+      783054
+    ],
+    [
+      2029607,
+      2104043,
+      497311,
+      184993,
+      369201,
+      45220
+    ],
+    [
+      6398922,
+      1400363,
+      70994,
+      7522409,
+      997916,
+      1405816
+    ],
+    [
+      3342273,
+      1032284,
+      2816,
+      81897,
+      3619069,
+      262443
+    ],
+    [
+      2661962,
+      131346,
+      19932,
+      187188,
+      50350,
+      4695742
+    ]
+  ],
+  "checkpoint": "/content/satellite-intelligence/models/checkpoints/unet_v2_best.pt"
+}
