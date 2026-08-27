@@ -3,3 +3,6 @@ __pycache__/
 .venv/
 *.egg-info/
 .pytest_cache/
+
+# Trained model checkpoint - published separately
+models/checkpoints/unet_v2_best.pt
